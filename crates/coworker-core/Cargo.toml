@@ -1,0 +1,21 @@
+[package]
+name = "coworker-core"
+version.workspace = true
+edition = "2021"
+license.workspace = true
+description = "Core library for Coworker - file ops, search, indexing"
+
+[dependencies]
+tokio.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+walkdir.workspace = true
+globset.workspace = true
+ignore.workspace = true
+rusqlite.workspace = true
+uuid.workspace = true
+chrono.workspace = true
+regex.workspace = true

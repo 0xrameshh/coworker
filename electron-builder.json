@@ -1,0 +1,65 @@
+{
+  "appId": "com.vikramships.coworker",
+  "productName": "Coworker",
+  "directories": {
+    "output": "release",
+    "buildResources": "build"
+  },
+  "files": [
+    "dist-electron/**/*",
+    "dist-react/**/*",
+    "node_modules/**/*",
+    "package.json"
+  ],
+  "asarUnpack": [
+    "dist-electron/preload.cjs"
+  ],
+  "extraResources": [
+    {
+      "from": "target/release/coworker",
+      "to": "coworker"
+    }
+  ],
+  "mac": {
+    "icon": "build/icon.icns",
+    "category": "public.app-category.developer-tools",
+    "target": [
+      {
+        "target": "dmg",
+        "arch": ["arm64"]
+      }
+    ],
+    "artifactName": "${productName}-${version}-${arch}.${ext}",
+    "darkModeSupport": true
+  },
+  "dmg": {
+    "title": "${productName} ${version}",
+    "icon": "build/icon.icns",
+    "iconSize": 80,
+    "contents": [
+      {
+        "x": 130,
+        "y": 220
+      },
+      {
+        "x": 410,
+        "y": 220,
+        "type": "link",
+        "path": "/Applications"
+      }
+    ],
+    "window": {
+      "width": 540,
+      "height": 380
+    }
+  },
+  "linux": {
+    "icon": "build/icon.png",
+    "category": "Development",
+    "target": ["AppImage", "deb"]
+  },
+  "win": {
+    "icon": "build/icon.png",
+    "target": ["nsis"]
+  }
+}
