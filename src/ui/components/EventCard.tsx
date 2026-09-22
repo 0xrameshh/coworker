@@ -145,9 +145,12 @@ export const MessageCard = memo(function MessageCard({
 
   if (sdkMessage.type === "user") {
     const contents = sdkMessage.message.content;
+    const blocks = Array.isArray(contents)
+      ? contents
+      : [{ type: "text", text: contents }];
     return (
       <>
-        {contents.map((content: ToolResultContent | { type: "text"; text: string }, idx: number) => {
+        {blocks.map((content: ToolResultContent | { type: "text"; text: string }, idx: number) => {
           if (content.type === "tool_result") {
             return <ToolResult key={idx} messageContent={content as ToolResultContent} />;
           }
