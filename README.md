@@ -30,11 +30,17 @@ Download the latest release for your platform:
 
 ```bash
 # Clone the repository
-git clone https://github.com/vikramships/coworker.git
+git clone https://github.com/0xrameshh/coworker.git
 cd coworker
 
-# Install dependencies
+# Install dependencies (needs Node 22; see .nvmrc)
 bun install
+
+# Download the bundled tools (fd, ripgrep, bat)
+bash scripts/download-binaries.sh
+
+# Build the Rust backend
+cargo build --release
 
 # Start development server
 bun run dev
