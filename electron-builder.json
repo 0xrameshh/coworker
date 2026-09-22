@@ -18,7 +18,10 @@
     {
       "from": "target/release",
       "to": ".",
-      "filter": ["coworker", "coworker.exe"]
+      "filter": [
+        "coworker",
+        "coworker.exe"
+      ]
     },
     {
       "from": "bin",
@@ -26,12 +29,14 @@
     }
   ],
   "mac": {
-    "icon": "build/icon.icns",
+    "icon": "assets/logo-icon.png",
     "category": "public.app-category.developer-tools",
     "target": [
       {
         "target": "dmg",
-        "arch": ["arm64"]
+        "arch": [
+          "arm64"
+        ]
       }
     ],
     "artifactName": "${productName}-${version}-${arch}.${ext}",
@@ -39,7 +44,7 @@
   },
   "dmg": {
     "title": "${productName} ${version}",
-    "icon": "build/icon.icns",
+    "icon": "assets/logo-icon.png",
     "iconSize": 80,
     "contents": [
       {
@@ -59,12 +64,17 @@
     }
   },
   "linux": {
-    "icon": "build/icon.png",
+    "icon": "assets/logo-icon.png",
     "category": "Development",
-    "target": ["AppImage", "deb"]
+    "target": [
+      "AppImage",
+      "deb"
+    ]
   },
   "win": {
-    "icon": "build/icon.png",
-    "target": ["nsis"]
+    "icon": "assets/logo-icon.png",
+    "target": [
+      "nsis"
+    ]
   }
 }

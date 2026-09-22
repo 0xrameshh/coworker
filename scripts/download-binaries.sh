@@ -56,8 +56,13 @@ download() {
 }
 
 fd_asset="fd-${FD_VERSION}-${cpu}-${os}"
-rg_asset="ripgrep-${RG_VERSION}-${cpu}-${os}"
 bat_asset="bat-${BAT_VERSION}-${cpu}-${os}"
+# ripgrep ships a musl build for x86_64 linux instead of a gnu build
+if [ "$os" = "unknown-linux-gnu" ] && [ "$cpu" = "x86_64" ]; then
+    rg_asset="ripgrep-${RG_VERSION}-${cpu}-unknown-linux-musl"
+else
+    rg_asset="ripgrep-${RG_VERSION}-${cpu}-${os}"
+fi
 
 echo "Downloading bundled tools for ${platform}-${arch}..."
 
