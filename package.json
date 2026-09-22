@@ -1,6 +1,9 @@
 {
 	"name": "coworker",
-	"author": "0xrameshh",
+	"author": {
+		"name": "0xrameshh",
+		"email": "0xrameshh@users.noreply.github.com"
+	},
 	"description": "A modern desktop chat interface for collaborating with Claude Code",
 	"private": true,
 	"version": "0.1.0",
@@ -21,11 +24,11 @@
 		"test": "vitest",
 		"test:run": "vitest run",
 		"transpile:electron": "tsc --project src/electron/tsconfig.json",
-		"dist:mac": "bun run transpile:electron && bun run build && electron-builder --mac --arm64",
-		"dist:mac:sign": "bun run transpile:electron && bun run build && electron-builder --mac --arm64 --sign",
+		"dist:mac": "bun run transpile:electron && bun run build && electron-builder --mac --arm64 --publish never",
+		"dist:mac:sign": "bun run transpile:electron && bun run build && electron-builder --mac --arm64 --sign --publish never",
 		"dist:mac:notarize": "./scripts/build-mac-notarized.sh",
-		"dist:win": "bun run transpile:electron && bun run build && electron-builder --win --x64",
-		"dist:linux": "bun run transpile:electron && bun run build && electron-builder --linux --x64"
+		"dist:win": "bun run transpile:electron && bun run build && electron-builder --win --x64 --publish never",
+		"dist:linux": "bun run transpile:electron && bun run build && electron-builder --linux --x64 --publish never"
 	},
 	"dependencies": {
 		"@anthropic-ai/claude-agent-sdk": "0.2.6",
