@@ -36,6 +36,7 @@ dist-electron
 
 # Build outputs
 build/
+release/
 out/
 *.exe
 *.dmg
@@ -75,3 +76,6 @@ Desktop.ini
 
 # Rust build artifacts
 target/
+
+# Downloaded bundled tool binaries
+bin/

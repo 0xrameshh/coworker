@@ -1,70 +1,75 @@
 #!/bin/bash
-# Download pre-built Rust tool binaries for bundling in Electron app
+# Download pre-built Rust tool binaries for bundling in the Electron app.
+# Writes fd, ripgrep, and bat into ./bin for the current platform.
 
-set -e
+set -euo pipefail
 
-PLATFORM=$(uname -s)
-ARCH=$(uname -m)
 BIN_DIR="$(pwd)/bin"
-
-# Create bin directory
 mkdir -p "$BIN_DIR"
 
-echo "Downloading binaries for $PLATFORM-$ARCH..."
+FD_VERSION="v10.2.0"
+RG_VERSION="14.1.0"
+BAT_VERSION="v0.25.0"
 
-# fd - File finder
-echo "  Downloading fd..."
-case "$PLATFORM-$ARCH" in
-    Darwin-x86_64)
-        curl -sL "https://github.com/sharkdp/fd/releases/download/v9.1.0/fd-v9.1.0-x86_64-apple-darwin.tar.gz" | tar xz -C "$BIN_DIR" --strip-components=1 "fd-v9.1.0-x86_64-apple-darwin/fd"
-        ;;
-    Darwin-arm64)
-        curl -sL "https://github.com/sharkdp/fd/releases/download/v9.1.0/fd-v9.1.0-aarch64-apple-darwin.tar.gz" | tar xz -C "$BIN_DIR" --strip-components=1 "fd-v9.1.0-aarch64-apple-darwin/fd"
-        ;;
-    Linux-x86_64)
-        curl -sL "https://github.com/sharkdp/fd/releases/download/v9.1.0/fd-v9.1.0-x86_64-unknown-linux-gnu.tar.gz" | tar xz -C "$BIN_DIR" --strip-components=1 "fd-v9.1.0-x86_64-unknown-linux-gnu/fd"
-        ;;
-    Linux-aarch64)
-        curl -sL "https://github.com/sharkdp/fd/releases/download/v9.1.0/fd-v9.1.0-aarch64-unknown-linux-gnu.tar.gz" | tar xz -C "$BIN_DIR" --strip-components=1 "fd-v9.1.0-aarch64-unknown-linux-gnu/fd"
-        ;;
+platform="$(uname -s)"
+arch="$(uname -m)"
+
+case "$platform" in
+    Darwin) os="apple-darwin"; ext="" ;;
+    Linux) os="unknown-linux-gnu"; ext="" ;;
+    MINGW*|MSYS*|CYGWIN*) os="pc-windows-msvc"; ext=".exe" ;;
+    *) echo "Unsupported platform: $platform"; exit 1 ;;
 esac
 
-# ripgrep - Search
-echo "  Downloading ripgrep..."
-case "$PLATFORM-$ARCH" in
-    Darwin-x86_64)
-        curl -sL "https://github.com/BurntSushi/ripgrep/releases/download/14.1.0/ripgrep-14.1.0-x86_64-apple-darwin.tar.gz" | tar xz -C "$BIN_DIR" --strip-components=1 "ripgrep-14.1.0-x86_64-apple-darwin/rg"
-        ;;
-    Darwin-arm64)
-        curl -sL "https://github.com/BurntSushi/ripgrep/releases/download/14.1.0/ripgrep-14.1.0-aarch64-apple-darwin.tar.gz" | tar xz -C "$BIN_DIR" --strip-components=1 "ripgrep-14.1.0-aarch64-apple-darwin/rg"
-        ;;
-    Linux-x86_64)
-        curl -sL "https://github.com/BurntSushi/ripgrep/releases/download/14.1.0/ripgrep-14.1.0-x86_64-unknown-linux-gnu.tar.gz" | tar xz -C "$BIN_DIR" --strip-components=1 "ripgrep-14.1.0-x86_64-unknown-linux-gnu/rg"
-        ;;
-    Linux-aarch64)
-        curl -sL "https://github.com/BurntSushi/ripgrep/releases/download/14.1.0/ripgrep-14.1.0-aarch64-unknown-linux-gnu.tar.gz" | tar xz -C "$BIN_DIR" --strip-components=1 "ripgrep-14.1.0-aarch64-unknown-linux-gnu/rg"
-        ;;
+case "$arch" in
+    arm64|aarch64) cpu="aarch64" ;;
+    x86_64|amd64) cpu="x86_64" ;;
+    *) echo "Unsupported architecture: $arch"; exit 1 ;;
 esac
 
-# bat - Syntax cat
-echo "  Downloading bat..."
-case "$PLATFORM-$ARCH" in
-    Darwin-x86_64)
-        curl -sL "https://github.com/sharkdp/bat/releases/download/v25.1.0/bat-v25.1.0-x86_64-apple-darwin.tar.gz" | tar xz -C "$BIN_DIR" --strip-components=1 "bat-v25.1.0-x86_64-apple-darwin/bat"
-        ;;
-    Darwin-arm64)
-        curl -sL "https://github.com/sharkdp/bat/releases/download/v25.1.0/bat-v25.1.0-aarch64-apple-darwin.tar.gz" | tar xz -C "$BIN_DIR" --strip-components=1 "bat-v25.1.0-aarch64-apple-darwin/bat"
-        ;;
-    Linux-x86_64)
-        curl -sL "https://github.com/sharkdp/bat/releases/download/v25.1.0/bat-v25.1.0-x86_64-unknown-linux-gnu.tar.gz" | tar xz -C "$BIN_DIR" --strip-components=1 "bat-v25.1.0-x86_64-unknown-linux-gnu/bat"
-        ;;
-    Linux-aarch64)
-        curl -sL "https://github.com/sharkdp/bat/releases/download/v25.1.0/bat-v25.1.0-aarch64-unknown-linux-gnu.tar.gz" | tar xz -C "$BIN_DIR" --strip-components=1 "bat-v25.1.0-aarch64-unknown-linux-gnu/bat"
-        ;;
-esac
+download() {
+    local url="$1" inner="$2" dest="$3" tmp found
+    tmp="$(mktemp -d)"
+    case "$url" in
+        *.zip)
+            curl -sSL "$url" -o "$tmp/archive.zip"
+            if command -v unzip >/dev/null 2>&1; then
+                unzip -o "$tmp/archive.zip" -d "$tmp" >/dev/null
+            else
+                powershell -NoProfile -Command "Expand-Archive -LiteralPath '$tmp/archive.zip' -DestinationPath '$tmp/unpacked' -Force" >/dev/null
+            fi
+            ;;
+        *)
+            curl -sSL "$url" -o "$tmp/archive.tar.gz"
+            tar xzf "$tmp/archive.tar.gz" -C "$tmp"
+            ;;
+    esac
+    found="$(find "$tmp" -type f -name "$(basename "$inner")" | head -n 1)"
+    if [ -z "$found" ]; then
+        echo "Could not extract $inner from $url"
+        exit 1
+    fi
+    mv "$found" "$dest"
+    rm -rf "$tmp"
+    chmod +x "$dest" 2>/dev/null || true
+    echo "  $(basename "$dest") ready"
+}
 
-# Make binaries executable
-chmod +x "$BIN_DIR"/*
+fd_asset="fd-${FD_VERSION}-${cpu}-${os}"
+rg_asset="ripgrep-${RG_VERSION}-${cpu}-${os}"
+bat_asset="bat-${BAT_VERSION}-${cpu}-${os}"
 
-echo "✅ Binaries downloaded to $BIN_DIR/"
-ls -la "$BIN_DIR"/
+echo "Downloading bundled tools for ${platform}-${arch}..."
+
+if [ -n "$ext" ]; then
+    download "https://github.com/sharkdp/fd/releases/download/${FD_VERSION}/${fd_asset}.zip" "fd.exe" "$BIN_DIR/fd.exe"
+    download "https://github.com/BurntSushi/ripgrep/releases/download/${RG_VERSION}/${rg_asset}.zip" "rg.exe" "$BIN_DIR/rg.exe"
+    download "https://github.com/sharkdp/bat/releases/download/${BAT_VERSION}/${bat_asset}.zip" "bat.exe" "$BIN_DIR/bat.exe"
+else
+    download "https://github.com/sharkdp/fd/releases/download/${FD_VERSION}/${fd_asset}.tar.gz" "fd" "$BIN_DIR/fd"
+    download "https://github.com/BurntSushi/ripgrep/releases/download/${RG_VERSION}/${rg_asset}.tar.gz" "rg" "$BIN_DIR/rg"
+    download "https://github.com/sharkdp/bat/releases/download/${BAT_VERSION}/${bat_asset}.tar.gz" "bat" "$BIN_DIR/bat"
+fi
+
+echo "Bundled tools:"
+ls -la "$BIN_DIR"

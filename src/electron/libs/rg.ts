@@ -18,7 +18,8 @@ export interface RgOptions {
 
 function getBinPath(): string {
   // Look in bundled binaries first, fallback to system PATH
-  const bundledPath = join(process.resourcesPath, "bin", "rg");
+  const binName = process.platform === "win32" ? "rg.exe" : "rg";
+  const bundledPath = join(process.resourcesPath, "bin", binName);
   if (existsSync(bundledPath)) {
     return bundledPath;
   }

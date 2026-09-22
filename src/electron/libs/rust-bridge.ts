@@ -21,9 +21,10 @@ let isServerReady = false;
  * Get the path to the Rust server binary
  */
 function getRustServerPath(): string | null {
+  const binName = process.platform === "win32" ? "coworker.exe" : "coworker";
   // In production, binary should be in resources (check this FIRST)
   if (app.isPackaged) {
-    const prodPath = join(process.resourcesPath, "coworker");
+    const prodPath = join(process.resourcesPath, binName);
     if (existsSync(prodPath)) {
       console.log("[RustBridge] Using production binary:", prodPath);
       return prodPath;
@@ -31,7 +32,7 @@ function getRustServerPath(): string | null {
   }
 
   // In development, use the target/release path
-  const devPath = join(process.cwd(), "target", "release", "coworker");
+  const devPath = join(process.cwd(), "target", "release", binName);
   if (existsSync(devPath)) {
     console.log("[RustBridge] Using development binary:", devPath);
     return devPath;

@@ -1,5 +1,5 @@
 {
-  "appId": "com.vikramships.coworker",
+  "appId": "com.0xrameshh.coworker",
   "productName": "Coworker",
   "directories": {
     "output": "release",
@@ -16,8 +16,13 @@
   ],
   "extraResources": [
     {
-      "from": "target/release/coworker",
-      "to": "coworker"
+      "from": "target/release",
+      "to": ".",
+      "filter": ["coworker", "coworker.exe"]
+    },
+    {
+      "from": "bin",
+      "to": "bin"
     }
   ],
   "mac": {

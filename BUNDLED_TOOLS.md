@@ -6,9 +6,9 @@ Coworker bundles popular Rust tools for maximum performance without requiring us
 
 | Tool | Purpose | Version |
 |------|---------|---------|
-| [fd](https://github.com/sharkdp/fd) | Fast file finder | 9.1.0 |
+| [fd](https://github.com/sharkdp/fd) | Fast file finder | 10.2.0 |
 | [ripgrep](https://github.com/BurntSushi/ripgrep) | Content search | 14.1.0 |
-| [bat](https://github.com/sharkdp/bat) | Syntax cat | 25.1.0 |
+| [bat](https://github.com/sharkdp/bat) | Syntax cat | 0.25.0 |
 
 ## How It Works
 

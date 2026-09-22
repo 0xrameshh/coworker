@@ -18,7 +18,8 @@ export interface FdOptions {
 
 function getBinPath(): string {
   // Look in bundled binaries first, fallback to system PATH
-  const bundledPath = join(process.resourcesPath, "bin", "fd");
+  const binName = process.platform === "win32" ? "fd.exe" : "fd";
+  const bundledPath = join(process.resourcesPath, "bin", binName);
   if (require("fs").existsSync(bundledPath)) {
     return bundledPath;
   }
